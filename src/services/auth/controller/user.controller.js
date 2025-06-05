@@ -84,10 +84,33 @@ const login = asyncHandler(async (req, res) => {
                 data,
             )
         )
+});
+
+const userById = asyncHandler(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        throw new ErrorResponse(
+            AppStatusCode.badRequest,
+            `Validation error: ${result.array().at(0).msg}`,
+            result.array(),
+        )
+    }
+    const user = await User.findById(req.params.userId);
+
+    res
+        .status(AppStatusCode.ok)
+        .json(
+            new ApiResponse(
+                AppStatusCode.ok,
+                `Successfully got user's detail`,
+                user,
+            )
+        )
 
 });
 
 export {
     register,
     login,
+    userById,
 }

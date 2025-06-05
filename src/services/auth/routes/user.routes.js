@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { login, register } from "../controller/user.controller.js";
-import { body } from "express-validator";
+import { login, register, userById } from "../controller/user.controller.js";
+import { body, param } from "express-validator";
+import mongoose from "mongoose";
 
 const userRouter = Router();
 
@@ -21,6 +22,17 @@ userRouter.post(
     body("password").notEmpty().withMessage("Password field is required"),
     login,
 );
+
+userRouter.get(
+    "/:userId",
+    param("userId").custom((userId) => {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new Error("Invalid user id");
+        }
+        return true;
+    }),
+    userById,
+)
 
 
 export default userRouter;

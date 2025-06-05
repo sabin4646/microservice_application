@@ -47,13 +47,25 @@ const blogById = asyncHandler(async (req, res) => {
             `Blog with id ${blogId} not found`
         )
     }
+
+    const response = await fetch(`${process.env.AUTH_SERVICE_BASE_URL}/user/${blog.author}`, {
+        method: "GET",
+    });
+    const body = await response.json();
+    const { data } = body;
+
+    const finalResponse = {
+        ...blog._doc,
+        author: data,
+    }
+
     res
         .status(AppStatusCode.ok)
         .json(
             new ApiResponse(
                 AppStatusCode.ok,
                 `Successfully retrived blog with ${blogId}`,
-                blog,
+                finalResponse,
             )
         )
 });

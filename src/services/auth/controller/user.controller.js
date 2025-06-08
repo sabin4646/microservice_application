@@ -5,6 +5,8 @@ import ErrorResponse from "../../../utils/error.response.mjs";
 import User from "../model/user.model.js";
 import ApiResponse from "../../../utils/api.response.mjs";
 import jwt from "jsonwebtoken";
+import { sendMail } from "../producer/email/email.producer.js";
+import { sendNotification } from "../producer/notification/notification.producer.js";
 
 const register = asyncHandler(async (req, res) => {
     const result = validationResult(req);
@@ -38,6 +40,11 @@ const register = asyncHandler(async (req, res) => {
                 null,
             )
         )
+    sendMail({
+        from: "company@gmail.com",
+        to: email,
+        message: `Hello ${email}. Thanks for the registration`
+    });
 });
 
 const login = asyncHandler(async (req, res) => {
@@ -83,7 +90,8 @@ const login = asyncHandler(async (req, res) => {
                 `Login successfull`,
                 data,
             )
-        )
+        );
+    sendNotification({ message: `Your account ${email} was logged in just now.` });
 });
 
 const userById = asyncHandler(async (req, res) => {
